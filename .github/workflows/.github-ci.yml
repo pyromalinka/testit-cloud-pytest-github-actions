@@ -29,10 +29,10 @@ jobs:
     
     - name: Setup TestIT filter
       run: |
-        export TMS_TOKEN=RnVXTlN1ekt2Vk5oTUQ2eVNp
+        export TMS_TOKEN=ZWQ4M0Vnc3FFZ0t6VlY0QjRO
         testit autotests_filter \
-          --url https://192.168.88.146 \
-          --configuration-id 0198cc10-0aee-75dc-9d05-29e775b85665 \
+          --url https://team-4y6k.testit.software \
+          --configuration-id 0198d162-1544-744f-a04b-3276d36b9e56 \
           --testrun-id $TEST_RUN_ID \
           --framework pytest \
           --disable-cert-validation \
@@ -41,10 +41,10 @@ jobs:
     - name: Run filtered tests
       run: |
         pytest "$(cat tmp/filter.txt)" \
-          --tmsConfigurationId=0198cc10-0aee-75dc-9d05-29e775b85665 \
-          --tmsProjectId=0198cc10-0ade-7f9f-8d00-289873366333 \
-          --tmsPrivateToken=RnVXTlN1ekt2Vk5oTUQ2eVNp \
-          --tmsUrl=https://192.168.88.146 \
+          --tmsConfigurationId=0198d162-1544-744f-a04b-3276d36b9e56 \
+          --tmsProjectId=0198d162-1514-7157-a67d-82bd275ba589 \
+          --tmsPrivateToken=ZWQ4M0Vnc3FFZ0t6VlY0QjRO \
+          --tmsUrl=https://team-4y6k.testit.software \
           --tmsTestRunId=$TEST_RUN_ID \
           --tmsAdapterMode=1 \
           --tmsCertValidation=false \
