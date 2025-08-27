@@ -24,8 +24,8 @@ jobs:
     
     - name: Get TEST_RUN_ID from webhook
       run: |
-        echo "TEST_RUN_ID: ${{ github.event.client_payload.TEST_RUN_ID }}"
-        echo "TEST_RUN_ID=${{ github.event.client_payload.TEST_RUN_ID }}" >> $GITHUB_ENV
+        echo "TEST_RUN_ID: ${{ github.event.client_payload.test_run_id }}"
+        echo "TEST_RUN_ID=${{ github.event.client_payload.test_run_id }}" >> $GITHUB_ENV
     
     - name: Setup TestIT filter
       run: |
