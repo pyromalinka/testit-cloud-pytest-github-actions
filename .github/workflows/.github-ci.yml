@@ -1,0 +1,51 @@
+name: Pytest
+
+on:
+  repository_dispatch:
+    types: [run-tests]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install testit-cli
+    
+    - name: Get TEST_RUN_ID from webhook
+      run: |
+        echo "TEST_RUN_ID: ${{ github.event.client_payload.TEST_RUN_ID }}"
+        echo "TEST_RUN_ID=${{ github.event.client_payload.TEST_RUN_ID }}" >> $GITHUB_ENV
+    
+    - name: Setup TestIT filter
+      run: |
+        export TMS_TOKEN=RnVXTlN1ekt2Vk5oTUQ2eVNp
+        testit autotests_filter \
+          --url https://192.168.88.146 \
+          --configuration-id 0198cc10-0aee-75dc-9d05-29e775b85665 \
+          --testrun-id $TEST_RUN_ID \
+          --framework pytest \
+          --disable-cert-validation \
+          --output tmp/filter.txt
+    
+    - name: Run filtered tests
+      run: |
+        pytest "$(cat tmp/filter.txt)" \
+          --tmsConfigurationId=0198cc10-0aee-75dc-9d05-29e775b85665 \
+          --tmsProjectId=0198cc10-0ade-7f9f-8d00-289873366333 \
+          --tmsPrivateToken=RnVXTlN1ekt2Vk5oTUQ2eVNp \
+          --tmsUrl=https://192.168.88.146 \
+          --tmsTestRunId=$TEST_RUN_ID \
+          --tmsAdapterMode=1 \
+          --tmsCertValidation=false \
+          --testit
