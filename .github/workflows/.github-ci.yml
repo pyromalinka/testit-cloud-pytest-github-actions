@@ -5,27 +5,9 @@ on:
     types: [run-tests]
 
 jobs:
-  process-configurations:
+  test:
     runs-on: ubuntu-latest
-    outputs:
-      config_array: ${{ steps.set-configs.outputs.config_array }}
-    steps:
-    - name: Get parameters from webhook
-      id: set-configs
-      run: |
-        # Сохраняем массив configuration_id в output
-        CONFIG_ARRAY='${{ toJSON(github.event.client_payload.configuration_id) }}'
-        echo "config_array=$CONFIG_ARRAY" >> $GITHUB_OUTPUT
-        
-        echo "TEST_RUN_ID=${{ github.event.client_payload.test_run_id }}" >> $GITHUB_ENV
-        echo "PROJECT_ID=${{ github.event.client_payload.project_id }}" >> $GITHUB_ENV
-
-  run-tests:
-    needs: process-configurations
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        config_id: ${{ fromJSON(needs.process-configurations.outputs.config_array) }}
+    
     steps:
     - uses: actions/checkout@v3
     
@@ -39,38 +21,31 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
-    - name: Set configuration variables
+    - name: Get data from webhook
       run: |
         echo "TEST_RUN_ID=${{ github.event.client_payload.test_run_id }}" >> $GITHUB_ENV
         echo "PROJECT_ID=${{ github.event.client_payload.project_id }}" >> $GITHUB_ENV
-        echo "CONFIGURATION_ID=${{ matrix.config_id }}" >> $GITHUB_ENV
-    
-    - name: Debug output
-      run: |
-        echo "TEST_RUN_ID: $TEST_RUN_ID"
-        echo "PROJECT_ID: $PROJECT_ID"
-        echo "CONFIGURATION_ID: $CONFIGURATION_ID"
-        echo "Matrix config: ${{ matrix.config_id }}"
+        echo "CONFIGURATION_IDS=${{ github.event.client_payload.configuration_id[0] }}" >> $GITHUB_ENV
     
     - name: Setup TestIT filter
       run: |
         export TMS_TOKEN=${{ secrets.TMS_PRIVATE_TOKEN }}
         testit autotests_filter \
           --url ${{ secrets.TMS_URL }} \
-          --configuration-id "$CONFIGURATION_ID" \
-          --testrun-id "$TEST_RUN_ID" \
+          --configuration-id $CONFIGURATION_IDS \
+          --testrun-id $TEST_RUN_ID \
           --framework pytest \
           --disable-cert-validation \
           --output tmp/filter.txt
     
-    - name: Run filtered tests for configuration ${{ matrix.config_id }}
+    - name: Run filtered tests
       run: |
         pytest "$(cat tmp/filter.txt)" \
-          --tmsConfigurationId="$CONFIGURATION_ID" \
-          --tmsProjectId="$PROJECT_ID" \
+          --tmsConfigurationId=$CONFIGURATION_IDS \
+          --tmsProjectId=$PROJECT_ID \
           --tmsPrivateToken=${{ secrets.TMS_PRIVATE_TOKEN }} \
           --tmsUrl=${{ secrets.TMS_URL }} \
-          --tmsTestRunId="$TEST_RUN_ID" \
+          --tmsTestRunId=$TEST_RUN_ID \
           --tmsAdapterMode=1 \
           --tmsCertValidation=false \
           --testit
