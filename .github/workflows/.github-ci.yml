@@ -25,6 +25,7 @@ jobs:
       run: |
         echo "TEST_RUN_ID=${{ github.event.client_payload.test_run_id }}" >> $GITHUB_ENV
         echo "PROJECT_ID=${{ github.event.client_payload.project_id }}" >> $GITHUB_ENV
+        echo "CONFIGURATION_IDS=${{ github.event.client_payload.configuration_id }}" >> $GITHUB_ENV
     
     - name: Setup TestIT filter
       run: |
