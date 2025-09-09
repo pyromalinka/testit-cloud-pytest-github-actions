@@ -3,7 +3,7 @@ import testit
 
 
 def test_without_annotations_success():
-    assert True
+    assert False
 
 
 def test_without_annotations_failed():
