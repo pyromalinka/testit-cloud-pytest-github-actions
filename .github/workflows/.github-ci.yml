@@ -33,7 +33,7 @@ jobs:
         testit autotests_filter \
           --url ${{ secrets.TMS_URL }} \
           --configuration-id $CONFIGURATION_IDS \
-          --testrun-id $TEST_RUN_ID \
+          --testrun-id 196c70db-625f-4731-a597-cac3a5357be6 \
           --framework pytest \
           --disable-cert-validation \
           --output tmp/filter.txt
@@ -45,7 +45,7 @@ jobs:
           --tmsProjectId=$PROJECT_ID \
           --tmsPrivateToken=${{ secrets.TMS_PRIVATE_TOKEN }} \
           --tmsUrl=${{ secrets.TMS_URL }} \
-          --tmsTestRunId=$TEST_RUN_ID \
+          --tmsTestRunId=196c70db-625f-4731-a597-cac3a5357be6 \
           --tmsAdapterMode=1 \
           --tmsCertValidation=false \
           --testit
