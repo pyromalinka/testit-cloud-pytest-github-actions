@@ -107,11 +107,12 @@ def test_with_all_decorators_failed():
     assert False
 
 
+
 @testit.externalId("with_parameters_success")
 @testit.displayName("with_parameters_success")
 @testit.title("with_parameters_success Title {number} {text}")
 @pytest.mark.parametrize('number, text', [
-    (1, "string1111111")
+    (1, "string1")
 ])
 def test_with_parameters_success(number: int, text: str):
     assert True
