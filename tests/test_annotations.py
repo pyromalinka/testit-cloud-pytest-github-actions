@@ -107,11 +107,11 @@ def test_with_all_decorators_failed():
     assert False
 
 
-@testit.externalId("with_parameters_success_{number}_{text}")
-@testit.displayName("with_parameters_success DisplayName {number} {text}")
+@testit.externalId("with_parameters_success")
+@testit.displayName("with_parameters_success")
 @testit.title("with_parameters_success Title {number} {text}")
 @pytest.mark.parametrize('number, text', [
-    (1, "string11"),
+    (1, "string1"),
     (2, "string2"),
     (3, "string3"),
     pytest.param(4, "string4", marks=pytest.mark.skip(reason="bug test"))
