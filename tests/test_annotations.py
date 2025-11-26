@@ -1,7 +1,6 @@
 import pytest
 import testit
 
-
 @testit.externalId("with_parameters_success")
 @testit.displayName("with_parameters_success")
 @testit.title("with_parameters_success")
