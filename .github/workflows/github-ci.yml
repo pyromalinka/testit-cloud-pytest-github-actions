@@ -3,6 +3,8 @@ name: Pytest
 on:
   repository_dispatch:
     types: [run-tests]
+  push:
+    branches: [ main]
 
 jobs:
   test:
