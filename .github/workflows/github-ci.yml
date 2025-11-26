@@ -1,6 +1,8 @@
 name: Pytest
 
 on:
+  push:
+    branches: [ main]
   repository_dispatch:
     types: [run-tests]
 
