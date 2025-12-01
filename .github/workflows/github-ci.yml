@@ -3,8 +3,6 @@ name: Pytest
 on:
   repository_dispatch:
     types: [run-tests]
-  push:
-    branches: [ main]
 
 jobs:
   test:
@@ -22,16 +20,34 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-  
+    
+    - name: Get data from webhook
+      run: |
+        echo "TEST_RUN_ID=${{ github.event.client_payload.test_run_id }}" >> $GITHUB_ENV
+        echo "PROJECT_ID=${{ github.event.client_payload.project_id }}" >> $GITHUB_ENV
+        echo "CONFIGURATION_IDS=${{ github.event.client_payload.configuration_id[0] }}" >> $GITHUB_ENV
+        echo "CONFIGURATIONS_PARAMETERS[TestConfigurationKey]=${{ github.event.client_payload.configurations_parameters }}" >> $GITHUB_ENV
+        echo "CUSTOM_PARAMETERS[TestCustomKey]=${{ github.event.client_payload.custom_parameters }}" >> $GITHUB_ENV
+    
+    - name: Setup TestIT filter
+      run: |
+        export TMS_TOKEN=${{ secrets.TMS_PRIVATE_TOKEN }}
+        testit autotests_filter \
+          --url ${{ secrets.TMS_URL }} \
+          --configuration-id $CONFIGURATION_IDS \
+          --testrun-id $TEST_RUN_ID \
+          --framework pytest \
+          --disable-cert-validation \
+          --output tmp/filter.txt
     
     - name: Run filtered tests
       run: |
-        pytest \
+        pytest "$(cat tmp/filter.txt)" \
           --tmsConfigurationId=$CONFIGURATION_IDS \
           --tmsProjectId=$PROJECT_ID \
           --tmsPrivateToken=${{ secrets.TMS_PRIVATE_TOKEN }} \
           --tmsUrl=${{ secrets.TMS_URL }} \
-          --tmsTestRunId=bc48af7e-a519-44f3-80a4-cc1e9236146e \
+          --tmsTestRunId=$TEST_RUN_ID \
           --tmsAdapterMode=1 \
           --tmsCertValidation=false \
           --testit
