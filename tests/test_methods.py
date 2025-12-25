@@ -107,3 +107,7 @@ def test_with_all_methods_failed():
     testit.addMessage("Message")
 
     assert False
+    
+def new_test_1():
+    @testit.displayName("NewTest1")
+    assert True
