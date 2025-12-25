@@ -109,5 +109,6 @@ def test_with_all_methods_failed():
     assert False
     
 def new_test1():
+    @testit.externalId("new_test1")
     @testit.displayName("NewTest1")
     assert True
